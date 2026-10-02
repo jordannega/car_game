@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#05060a">
+<meta name="color-scheme" content="dark">
+
+<!-- SEO -->
+<title>NEON DRIFT — Synthwave Arcade Racing</title>
+<meta name="description" content="NEON DRIFT is a fast-paced synthwave arcade racer. Dodge traffic, chain combos, beat your high score. Play free in your browser.">
+<meta name="author" content="NEON DRIFT">
+<link rel="canonical" href="https://neondrift.example/">
+
+<!-- Open Graph -->
+<meta property="og:type" content="website">
+<meta property="og:title" content="NEON DRIFT — Synthwave Arcade Racing">
+<meta property="og:description" content="Dodge traffic, chain combos, beat your high score. Free in your browser.">
+<meta property="og:image" content="https://neondrift.example/og.png">
+<meta property="og:url" content="https://neondrift.example/">
+
+<!-- Twitter -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="NEON DRIFT — Synthwave Arcade Racing">
+<meta name="twitter:description" content="Dodge traffic, chain combos, beat your high score.">
+<meta name="twitter:image" content="https://neondrift.example/og.png">
+
+<!-- Favicon (inline SVG — no extra request) -->
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%2305060a'/><text y='72' x='50' text-anchor='middle' font-size='64' font-family='sans-serif' fill='%2300e0ff'>▲</text></svg>">
+
+<!-- Security note: CSP should be sent as an HTTP header by your host.
+     This meta version is a fallback for static hosts that don't allow headers. -->
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'; object-src 'none'">
+
+<style>
+  /* ... (same styles as before — truncated here for readability, keep your existing ones) ... */
+  * { margin:0; padding:0; box-sizing:border-box; user-select:none; -webkit-tap-highlight-color:transparent; }
+  html, body { height:100%; background:#05060a; overflow:hidden; font-family:'Segoe UI','Inter',system-ui,sans-serif; color:#fff; touch-action:none; overscroll-behavior:none; }
+  body { display:flex; justify-content:center; align-items:center; padding:10px; background: radial-gradient(ellipse at 50% 0%, #1a0a3a 0%, #05060a 55%), radial-gradient(ellipse at 50% 100%, #0a1a3a 0%, #05060a 60%); }
+  .stage { position:relative; width:min(96vw,96vh,640px); aspect-ratio:1/1; border-radius:28px; background:#000; box-shadow: 0 0 0 1px rgba(255,255,255,0.06), 0 0 60px rgba(120,80,255,0.35), 0 40px 80px -20px rgba(0,0,0,1), inset 0 0 80px rgba(0,0,0,0.9); overflow:hidden; touch-action:none; }
+  .stage::before { content:''; position:absolute; inset:-2px; border-radius:30px; padding:2px; background:conic-gradient(from 0deg,#ff00e5,#00e0ff,#7b00ff,#ff00e5); -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0); -webkit-mask-composite:xor; mask-composite:exclude; animation:spin 6s linear infinite; pointer-events:none; z-index:5; opacity:0.9; }
+  @keyframes spin { to { transform:rotate(360deg); } }
+  canvas { display:block; width:100%; height:100%; border-radius:26px; touch-action:none; }
+  .hud { position:absolute; inset:0; pointer-events:none; padding:16px 18px; display:flex; justify-content:space-between; align-items:flex-start; z-index:4; font-weight:700; letter-spacing:0.5px; }
+  .hud-left,.hud-right { display:flex; flex-direction:column; gap:6px; }
+  .hud-right { align-items:flex-end; }
+  .score-badge { background:rgba(10,4,20,0.55); backdrop-filter:blur(12px); -webkit-backdrop-filter:blur(12px); border:1px solid rgba(255,0,230,0.35); padding:8px 14px; border-radius:14px; font-size:clamp(14px,2.8vw,20px); color:#fff; text-shadow:0 0 12px #ff00e5; box-shadow:0 0 20px rgba(255,0,230,0.4),inset 0 0 20px rgba(255,0,230,0.15); font-variant-numeric:tabular-nums; }
+  .highscore-badge { background:rgba(20,10,0,0.55); backdrop-filter:blur(12px); -webkit-backdrop-filter:blur(12px); border:1px solid rgba(255,200,0,0.4); padding:5px 11px; border-radius:12px; font-size:clamp(9px,1.8vw,12px); color:#ffd966; text-shadow:0 0 10px #ffaa00; box-shadow:0 0 16px rgba(255,180,0,0.3); font-variant-numeric:tabular-nums; letter-spacing:1px; }
+  .speed-badge { background:rgba(0,6,20,0.55); backdrop-filter:blur(12px); -webkit-backdrop-filter:blur(12px); border:1px solid rgba(0,224,255,0.4); padding:6px 12px; border-radius:12px; font-size:clamp(10px,2vw,13px); color:#aef2ff; text-shadow:0 0 10px #00e0ff; box-shadow:0 0 18px rgba(0,224,255,0.35); font-variant-numeric:tabular-nums; }
+  .combo-badge { background:rgba(30,0,20,0.6); border:1px solid rgba(255,120,0,0.6); padding:6px 12px; border-radius:12px; font-size:clamp(11px,2.2vw,15px); color:#ffcf6a; text-shadow:0 0 12px #ff9500; box-shadow:0 0 22px rgba(255,140,0,0.5); opacity:0; transform:translateY(-6px) scale(0.9); transition:opacity .25s,transform .25s; align-self:flex-start; }
+  .combo-badge.show { opacity:1; transform:translateY(0) scale(1); }
+  .controls { position:absolute; left:0; right:0; bottom:0; padding:18px 20px 22px; display:flex; justify-content:space-between; gap:16px; z-index:6; pointer-events:none; touch-action:none; }
+  .ctrl { pointer-events:auto; flex:1; max-width:46%; height:clamp(74px,13vw,100px); border:none; border-radius:22px; background:linear-gradient(180deg,rgba(255,255,255,0.06),rgba(0,0,0,0.4)),linear-gradient(135deg,#1a0e2e,#0a0618); color:#e9f6ff; font-size:clamp(28px,5.5vw,40px); font-weight:800; display:flex; align-items:center; justify-content:center; cursor:pointer; position:relative; overflow:hidden; box-shadow:0 0 0 1px rgba(255,255,255,0.08),0 0 24px rgba(120,0,255,0.35),inset 0 -6px 0 rgba(0,0,0,0.55),inset 0 0 30px rgba(120,0,255,0.15); transition:transform .06s ease,box-shadow .15s ease,filter .15s ease; text-shadow:0 0 14px #00e0ff; touch-action:none; }
+  .ctrl.right { text-shadow:0 0 14px #ff00e5; }
+  .ctrl.active { transform:translateY(4px) scale(0.98); filter:brightness(1.4); }
+  .overlay { position:absolute; inset:0; display:flex; flex-direction:column; justify-content:center; align-items:center; background:radial-gradient(circle at 50% 50%,rgba(20,0,40,0.75),rgba(0,0,0,0.92)); backdrop-filter:blur(6px); -webkit-backdrop-filter:blur(6px); z-index:8; text-align:center; padding:24px; gap:12px; transition:opacity .35s ease; touch-action:none; }
+  .overlay.hidden { opacity:0; pointer-events:none; }
+  .title { font-size:clamp(36px,8vw,68px); font-weight:900; letter-spacing:4px; background:linear-gradient(90deg,#00e0ff,#ff00e5,#ffaa00,#00e0ff); background-size:300% 100%; -webkit-background-clip:text; background-clip:text; color:transparent; animation:flow 3s linear infinite; filter:drop-shadow(0 0 20px rgba(255,0,230,0.7)); line-height:1; }
+  @keyframes flow { to { background-position:300% 0; } }
+  .subtitle { font-size:clamp(11px,2.4vw,15px); letter-spacing:6px; color:#7fdfff; text-shadow:0 0 12px #00e0ff; text-transform:uppercase; opacity:0.9; }
+  .final-score { margin-top:12px; font-size:clamp(20px,4vw,30px); font-weight:800; color:#fff; text-shadow:0 0 20px #ff00e5; font-variant-numeric:tabular-nums; }
+  .final-label { font-size:clamp(10px,2vw,13px); letter-spacing:4px; color:#ff8adf; text-transform:uppercase; opacity:0.85; }
+  .new-record { color:#ffd966; text-shadow:0 0 20px #ffaa00; font-size:clamp(12px,2.4vw,15px); letter-spacing:4px; animation:pulse 1.2s ease-in-out infinite; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.5} }
+  .play-btn { margin-top:22px; padding:14px 42px; border:none; border-radius:999px; font-size:clamp(14px,2.6vw,18px); font-weight:800; letter-spacing:3px; color:#06030d; background:linear-gradient(135deg,#00e0ff,#ff00e5); box-shadow:0 0 30px rgba(0,224,255,0.6),0 0 60px rgba(255,0,230,0.4); cursor:pointer; transition:transform .12s,filter .15s; text-transform:uppercase; }
+  .play-btn:hover { filter:brightness(1.15); transform:translateY(-2px); }
+  .play-btn:active { transform:translateY(1px) scale(0.98); }
+  .hint { margin-top:14px; font-size:clamp(10px,2vw,12px); color:#8ba0bd; letter-spacing:2px; text-transform:uppercase; opacity:0.75; }
+  .legal { position:absolute; bottom:8px; left:0; right:0; text-align:center; font-size:10px; color:#5a6b80; letter-spacing:1px; z-index:4; }
+  .legal a { color:#7fdfff; text-decoration:none; margin:0 6px; }
+  .legal a:hover { text-decoration:underline; }
+  @media (max-width:380px) { .controls{padding:12px 14px 16px;gap:10px} .hud{padding:12px 12px} }
+  @media (prefers-reduced-motion: reduce) {
+    .stage::before, .title, .new-record { animation: none !important; }
+  }
+</style>
+</head>
+<body>
+  <main class="stage" role="application" aria-label="NEON DRIFT arcade racing game">
+    <canvas id="game" width="720" height="720" aria-label="Game canvas. Use left and right arrow keys or the on-screen buttons to steer."></canvas>
+
+    <div class="hud" aria-hidden="true">
+      <div class="hud-left">
+        <div class="score-badge" id="scoreEl">0</div>
+        <div class="combo-badge" id="comboEl">×1</div>
+        <div class="highscore-badge" id="highEl">HI 0</div>
+      </div>
+      <div class="hud-right">
+        <div class="speed-badge" id="speedEl">SPD 1.0</div>
+      </div>
+    </div>
+
+    <div class="controls">
+      <button class="ctrl left"  id="btnL" aria-label="Steer left">◄</button>
+      <button class="ctrl right" id="btnR" aria-label="Steer right">►</button>
+    </div>
+
+    <div class="overlay" id="overlay">
+      <h1 class="title" id="ovTitle">NEON DRIFT</h1>
+      <p class="subtitle" id="ovSub">SYNTHWAVE ARCADE RACING</p>
+      <p class="final-score" id="ovScore" style="display:none;"></p>
+      <p class="final-label" id="ovScoreLabel" style="display:none;">FINAL SCORE</p>
+      <p class="new-record" id="ovRecord" style="display:none;">★ NEW RECORD ★</p>
+      <button class="play-btn" id="playBtn">DRIVE</button>
+      <p class="hint">◄ ► KEYS / BUTTONS</p>
+    </div>
+
+    <div class="legal" aria-hidden="true">
+      <a href="/privacy.html">Privacy</a>·
+      <a href="/terms.html">Terms</a>·
+      <a href="/sitemap.xml">Sitemap</a>
+    </div>
+  </main>
+
+<script src="game.js" defer></script>
+</body>
+</html>
